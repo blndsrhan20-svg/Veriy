@@ -77,7 +77,7 @@ def issue_token(user_id: int) -> str:
     expires = str(int((datetime.now(timezone.utc) + timedelta(days=7)).timestamp()))
     payload = f"{user_id}:{expires}".encode()
     sig = hmac.new(TOKEN_SECRET.encode(), payload, hashlib.sha256).digest()
-    return base64.urlsafe_b64encode(payload + b":" + sig).decode().rstrip("=")
+    return base64.urlsafe_b64encode(payload).decode().rstrip("=") + "." + base64.urlsafe_b64encode(sig).decode().rstrip("=")
 
 def current_user(authorization: str | None = Header(default=None), session: Session = Depends(db)):
     if not authorization or not authorization.startswith("Bearer "):
